@@ -6,7 +6,7 @@
 #include <unistd.h>
 
 #define ATTR "user.tags"
-#define MAX_TAGS 3
+#define MAX_TAGS 50
 #define MAX_TAG_SIZE 50
 #define BUFFER_SIZE MAX_TAGS * MAX_TAG_SIZE
 
@@ -20,6 +20,7 @@ int readTags(char *);
 int addTags(char *, int, char *[]);
 int removeTags(char *, int, char *[]);
 int processPath(char *, int, char *[], int);
+int writeOutTags(char *, char *, int);
 
 int main(int argc, char *argv[])
 {
@@ -113,14 +114,9 @@ int addTags(char *path, int argc, char *argv[])
       strcat(tempForWrite, " ");
     }
   }
-  if (numberOfExistingTags > MAX_TAGS) {
-    fprintf(stderr, "This operation would exceed the maximum %i tags.\n", MAX_TAGS);
-    return -1;
-  }
   tempForWrite[strlen(tempForWrite) - 1] = '\0';
-  setxattr(path, ATTR, tempForWrite, strlen(tempForWrite) + 1, 0);
   printf("%s %s\n", path, tempForWrite);
-  return 1;
+  return writeOutTags(path, tempForWrite, numberOfExistingTags);
 }
 
 int removeTags(char *path, int argc, char *argv[])
@@ -159,9 +155,8 @@ int removeTags(char *path, int argc, char *argv[])
     }
   }
   tempForWrite[strlen(tempForWrite) - 1] = '\0';
-  setxattr(path, ATTR, tempForWrite, strlen(tempForWrite) + 1, 0);
   printf("%s %s\n", path, tempForWrite);
-  return 1;
+  return writeOutTags(path, tempForWrite, numberOfExistingTags);
 }
 
 int processPath(char *path, int argc, char *argv[], int mode)
@@ -175,3 +170,22 @@ int processPath(char *path, int argc, char *argv[], int mode)
     return removeTags(path, argc, argv);
   }
 }
+
+int writeOutTags(char *path, char *value, int numberOfTags)
+{
+  if (numberOfTags > MAX_TAGS) {
+    fprintf(stderr, "This operation would exceed the maximum %i tags.\n", MAX_TAGS);
+    return -1;
+  }
+  if (setxattr(path, ATTR, value, strlen(value) + 1, 0) < 0) {
+    if ((errno == EDQUOT) || (errno == ENOSPC)) {
+      fprintf(stderr, "Insufficient space to write tags");
+      return -1;
+    } else if (errno == ENOTSUP) {
+      fprintf (stderr, "Extended attributes are not available on your filesystem.\n");
+      return -1;
+    }
+  }
+  return 1;
+}
+
