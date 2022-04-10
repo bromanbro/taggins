@@ -180,8 +180,9 @@ int writeOutTags(char *path, char *value, int numberOfTags)
   if (numberOfTags > MAX_TAGS) {
     fprintf(stderr, "This operation would exceed the maximum %i tags.\n", MAX_TAGS);
     return -1;
-  }
-  if (setxattr(path, ATTR, value, strlen(value) + 1, 0) < 0) {
+  } else if (numberOfTags == 0) {
+    return removeAllTags(path);
+  } else if (setxattr(path, ATTR, value, strlen(value) + 1, 0) < 0) {
     if ((errno == EDQUOT) || (errno == ENOSPC)) {
       fprintf(stderr, "Insufficient space to write tags");
       return -1;
