@@ -1,10 +1,14 @@
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
 #include <sys/xattr.h>
+#include <unistd.h>
 
 #define ATTR "user.tags"
+#define MAX_TAGS 3
+#define MAX_TAG_SIZE 50
+#define BUFFER_SIZE MAX_TAGS * MAX_TAG_SIZE
 
 enum {
   READ,
@@ -12,10 +16,10 @@ enum {
   REMOVE
 };
 
-void readTags(char *);
-void addTags(char *, int, char *[]);
-void removeTags(char *, int, char *[]);
-void processPath(char *, int, char *[], int);
+int readTags(char *);
+int addTags(char *, int, char *[]);
+int removeTags(char *, int, char *[]);
+int processPath(char *, int, char *[], int);
 
 int main(int argc, char *argv[])
 {
@@ -37,42 +41,55 @@ int main(int argc, char *argv[])
   }
 
   if (path != NULL) {
-    processPath(path, argc, argv, mode);
-    return 0;
+    if (processPath(path, argc, argv, mode) < 0) {
+      exit(EXIT_FAILURE);
+    }
+    exit(EXIT_SUCCESS);
   }
 
   char *line = NULL;
   size_t len = 0;
   while (getline(&line, &len, stdin) != -1) {
-    processPath(line, argc, argv, mode);
+    if (processPath(line, argc, argv, mode) < 0) {
+      free(line);
+      exit(EXIT_FAILURE);
+    }
   }
   free(line);
-  return 0;
+  exit(EXIT_SUCCESS);
 }
 
-void readTags(char *path)
+int readTags(char *path)
 {
-  int size = 200;
-  char temp[size];
-  int result = getxattr(path, ATTR, temp, size);
+  char temp[BUFFER_SIZE];
   printf("%s ", path);
-  if (result != -1) {
+  int result = getxattr(path, ATTR, temp, BUFFER_SIZE);
+  if (result < 0) {
+    if (errno == ENOTSUP) {
+      fprintf (stderr, "Extended attributes are not available on your filesystem.\n");
+      return -1;
+    }
+    printf("\n");
+  } else {
     printf("%s\n", temp);
   }
-  else {
-    printf("\n");
-  }
+  return 1;
 }
 
-void addTags(char *path, int argc, char *argv[])
+int addTags(char *path, int argc, char *argv[])
 {
-  int size = 200;
-  char temp[size];
-  char tempForWrite[size];
+  char temp[BUFFER_SIZE];
+  char tempForWrite[BUFFER_SIZE];
   tempForWrite[0] = '\0';
-  int result = getxattr(path, ATTR, temp, size);
+  int result = getxattr(path, ATTR, temp, BUFFER_SIZE);
+  if (result < 0) {
+    if (errno == ENOTSUP) {
+      fprintf (stderr, "Extended attributes are not available on your filesystem.\n");
+      return -1;
+    }
+  }
   int numberOfExistingTags = 0;
-  char *existingTags[20];
+  char *existingTags[MAX_TAGS];
   if ((result != -1) && (strlen(temp) > 0)) {
     strcat(tempForWrite, temp);
     strcat(tempForWrite, " ");
@@ -96,20 +113,31 @@ void addTags(char *path, int argc, char *argv[])
       strcat(tempForWrite, " ");
     }
   }
+  if (numberOfExistingTags > MAX_TAGS) {
+    fprintf(stderr, "This operation would exceed the maximum %i tags.\n", MAX_TAGS);
+    return -1;
+  }
   tempForWrite[strlen(tempForWrite) - 1] = '\0';
   setxattr(path, ATTR, tempForWrite, strlen(tempForWrite) + 1, 0);
   printf("%s %s\n", path, tempForWrite);
+  return 1;
 }
 
-void removeTags(char *path, int argc, char *argv[])
+int removeTags(char *path, int argc, char *argv[])
 {
-  int size = 200;
-  char temp[size];
-  char tempForWrite[size];
-  tempForWrite[0] = '\0';
-  int result = getxattr(path, ATTR, temp, size);
   int numberOfExistingTags = 0;
-  char *existingTags[20];
+  char temp[BUFFER_SIZE];
+  char tempForWrite[BUFFER_SIZE];
+  char *existingTags[MAX_TAGS];
+
+  tempForWrite[0] = '\0';
+  int result = getxattr(path, ATTR, temp, BUFFER_SIZE);
+  if (result < 0) {
+    if (errno == ENOTSUP) {
+      fprintf (stderr, "Extended attributes are not available on your filesystem.\n");
+      return -1;
+    }
+  }
   if (result != -1) {
     char *p = strtok(temp, " ");
     while (p != NULL) {
@@ -133,18 +161,17 @@ void removeTags(char *path, int argc, char *argv[])
   tempForWrite[strlen(tempForWrite) - 1] = '\0';
   setxattr(path, ATTR, tempForWrite, strlen(tempForWrite) + 1, 0);
   printf("%s %s\n", path, tempForWrite);
+  return 1;
 }
 
-void processPath(char *path, int argc, char *argv[], int mode)
+int processPath(char *path, int argc, char *argv[], int mode)
 {
   switch (mode) {
   case READ:
-    readTags(path);
-    break;
+    return readTags(path);
   case ADD:
-    addTags(path, argc, argv);
-    break;
+    return addTags(path, argc, argv);
   case REMOVE:
-    removeTags(path, argc, argv);
+    return removeTags(path, argc, argv);
   }
 }
