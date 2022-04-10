@@ -16,11 +16,12 @@ enum {
   REMOVE
 };
 
-int readTags(char *);
+int displayTags(char *);
 int addTags(char *, int, char *[]);
 int removeTags(char *, int, char *[]);
 int processPath(char *, int, char *[], int);
 int writeOutTags(char *, char *, int);
+int readInTags(char *, char *);
 
 int main(int argc, char *argv[])
 {
@@ -60,21 +61,15 @@ int main(int argc, char *argv[])
   exit(EXIT_SUCCESS);
 }
 
-int readTags(char *path)
+int displayTags(char *path)
 {
   char temp[BUFFER_SIZE];
   printf("%s ", path);
-  int result = getxattr(path, ATTR, temp, BUFFER_SIZE);
-  if (result < 0) {
-    if (errno == ENOTSUP) {
-      fprintf (stderr, "Extended attributes are not available on your filesystem.\n");
-      return -1;
-    }
+  if (readInTags(path, temp) < 0) {
     printf("\n");
-  } else {
-    printf("%s\n", temp);
+    return -1;
   }
-  return 1;
+  printf("%s\n", temp);
 }
 
 int addTags(char *path, int argc, char *argv[])
@@ -82,16 +77,14 @@ int addTags(char *path, int argc, char *argv[])
   char temp[BUFFER_SIZE];
   char tempForWrite[BUFFER_SIZE];
   tempForWrite[0] = '\0';
-  int result = getxattr(path, ATTR, temp, BUFFER_SIZE);
-  if (result < 0) {
-    if (errno == ENOTSUP) {
-      fprintf (stderr, "Extended attributes are not available on your filesystem.\n");
-      return -1;
-    }
-  }
   int numberOfExistingTags = 0;
   char *existingTags[MAX_TAGS];
-  if ((result != -1) && (strlen(temp) > 0)) {
+
+  int result = readInTags(path, temp);
+  if (result < 0) {
+    return -1;
+  }
+  else if (strlen(temp) > 0) {
     strcat(tempForWrite, temp);
     strcat(tempForWrite, " ");
     char *p = strtok(temp, " ");
@@ -127,14 +120,10 @@ int removeTags(char *path, int argc, char *argv[])
   char *existingTags[MAX_TAGS];
 
   tempForWrite[0] = '\0';
-  int result = getxattr(path, ATTR, temp, BUFFER_SIZE);
+  int result = readInTags(path, temp);
   if (result < 0) {
-    if (errno == ENOTSUP) {
-      fprintf (stderr, "Extended attributes are not available on your filesystem.\n");
-      return -1;
-    }
-  }
-  if (result != -1) {
+    return -1;
+  } else if (strlen(temp) > 0) {
     char *p = strtok(temp, " ");
     while (p != NULL) {
       existingTags[numberOfExistingTags++] = p;
@@ -163,7 +152,7 @@ int processPath(char *path, int argc, char *argv[], int mode)
 {
   switch (mode) {
   case READ:
-    return readTags(path);
+    return displayTags(path);
   case ADD:
     return addTags(path, argc, argv);
   case REMOVE:
@@ -187,5 +176,18 @@ int writeOutTags(char *path, char *value, int numberOfTags)
     }
   }
   return 1;
+}
+
+int readInTags(char *path, char *buffer) {
+  int result = getxattr(path, ATTR, buffer, BUFFER_SIZE);
+  if (result < 0) {
+    if (errno == ENOTSUP) {
+      fprintf (stderr, "Extended attributes are not available on your filesystem.\n");
+      return -1;
+    }
+    buffer[0] = '\0';
+    return 0;
+  }
+  return result;
 }
 
