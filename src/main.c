@@ -13,12 +13,14 @@
 enum {
   READ,
   ADD,
-  REMOVE
+  REMOVE,
+  REMOVE_ALL
 };
 
 int displayTags(char *);
 int addTags(char *, int, char *[]);
 int removeTags(char *, int, char *[]);
+int removeAllTags(char *);
 int processPath(char *, int, char *[], int);
 int writeOutTags(char *, char *, int);
 int readInTags(char *, char *);
@@ -28,13 +30,16 @@ int main(int argc, char *argv[])
   int mode = READ;
   int opt;
   char *path = NULL;
-  while ((opt = getopt(argc, argv, ":arf:")) != -1) {
+  while ((opt = getopt(argc, argv, ":ardf:")) != -1) {
     switch (opt) {
     case 'a':
       mode = ADD;
       break;
     case 'r':
       mode = REMOVE;
+      break;
+    case 'd':
+      mode = REMOVE_ALL;
       break;
     case 'f':
       path = optarg;
@@ -148,6 +153,14 @@ int removeTags(char *path, int argc, char *argv[])
   return writeOutTags(path, tempForWrite, numberOfExistingTags);
 }
 
+int removeAllTags(char *path) {
+  if ((removexattr(path, ATTR) < 0) && (errno == ENOTSUP)) {
+    fprintf (stderr, "Extended attributes are not available on your filesystem.\n");
+    return -1;
+  }
+  return 1;
+}
+
 int processPath(char *path, int argc, char *argv[], int mode)
 {
   switch (mode) {
@@ -157,6 +170,8 @@ int processPath(char *path, int argc, char *argv[], int mode)
     return addTags(path, argc, argv);
   case REMOVE:
     return removeTags(path, argc, argv);
+  case REMOVE_ALL:
+    return removeAllTags(path);
   }
 }
 
