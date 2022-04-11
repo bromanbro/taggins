@@ -29,9 +29,7 @@ make
 sudo make install
 ```
 
-## Contact
-Dorian Yeager [LinkedIN](https://www.linkedin.com/in/dorian-yeager-346246163)
-
+## Man Page
 ### NAME
 
 taggins - Descriptively tag all of the things.
@@ -80,3 +78,6 @@ words in an extended attribute named user.tags. Extended attributes are
 available and enabled by default on most (but not all) modern file
 systems. **Taggins** will error out and inform the user if extended
 attributes are not available for a file.
+
+## Contact
+Dorian Yeager [LinkedIn](https://www.linkedin.com/in/dorian-yeager-346246163)
