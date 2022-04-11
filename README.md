@@ -18,34 +18,29 @@ Taggins maintains a string of one word tags separated by spaces in an extended f
 
 ## Installation
 1. Clone the repo
-2. ```sh
-3. git clone https://github.com/bromanbro/taggins.git
-4. ```
-5. 2. Move into the project root and build for your system
-6. ```sh
-7. cd taggins
-8. ./configure
-9. make
-10. sudo make install
-11. ```
-
-## Usage
-TODO include video
+```sh
+git clone https://github.com/bromanbro/taggins.git
+```
+2. Move into the project root and build for your system
+```sh
+cd taggins
+./configure
+make
+sudo make install
+```
 
 ## Contact
 Dorian Yeager [LinkedIN](https://www.linkedin.com/in/dorian-yeager-346246163)
 
-# Man Page
----
-## NAME
+### NAME
 
 taggins - Descriptively tag all of the things.
 
-## SYNOPSIS
+### SYNOPSIS
 
 **taggins** \[-a|-r|-d\] \[-f *filepath*\] \[tag ...\]
 
-## DESCRIPTION
+### DESCRIPTION
 
 **taggins** takes a stream of paths piped through stdin and performs
 CRUD operations for a list of descriptive tags. Tags are a list of
@@ -56,7 +51,7 @@ If no options are passed **taggins** operates in read mode. In this
 default mode the complete file path is sent to stdout followed by all
 tags for that file.
 
-### Options
+#### Options
 
   - **-a**  
     Add tags. All tags passed are added to the list of tags on a given
@@ -74,11 +69,11 @@ tags for that file.
     Specify a file. Operate on the file given at the command line rather
     than processing files piped through stdin.
 
-## SEE ALSO
+### SEE ALSO
 
 xattr(7), setxattr(2), getxattr(2), listxattr(2), removexattr(2)
 
-## BUGS
+### BUGS
 
 This program operates by maintaining a string of space delimited tags /
 words in an extended attribute named user.tags. Extended attributes are
