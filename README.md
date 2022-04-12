@@ -7,23 +7,28 @@ Suckless tool for descriptively tagging files
 Taggins is a command line tool that allows you to; create, read, update, and delete descripive tags for your files.  It adheres to the Unix phiosophy of tools that do one thing really well.  Taggins is meant to tie in with other command line tools providing you a way of quickly locating items of interest.
 
 You should probably use taggins if:
+* You are a linux user.
+* You like stringing together powerful commands in the terminal.
 * You have vast amounts of media and need advanced filtering.
 * You are a researcher that needs to catagorize files.
-* You are a parent that wants to launch a slideshow in < 20 seconds of all pictures with tags: Billy LittleLeaque 2019.
-* You are a person who generally likes to categorize things in an arbitrary way.
+* You are a parent that wants to launch a slideshow in < 20 seconds of all pictures with tags: Chester LittleLeaque 2019.
+* You are a person who likes to categorize things in arbitrary ways.
+
+You may want to move along if:
+* You work in Windows exclusively.
+* You do not like the command line and the sight of a terminal fills you with chagrin.
 
 ## Getting Started
 To use taggins you must have a file system that supports extended attributes.
 Taggins maintains a string of one word tags separated by spaces in an extended file attribute.  Most (but not all) modern file systems support extended file attributes and have them enabled by default.
 
-## Installation
+## Installation in any Linux environment
 1. Clone the repo
 ```sh
 git clone https://github.com/bromanbro/taggins.git
 ```
 2. Move into the project root and build for your system
 ```sh
-cd taggins
 ./configure
 make
 sudo make install
