@@ -24,6 +24,7 @@ int removeAllTags(char *);
 int processPath(char *, int, char *[], int);
 int writeOutTags(char *, char *, int);
 int readInTags(char *, char *);
+void checkExclusive(int);
 
 int main(int argc, char *argv[])
 {
@@ -33,12 +34,15 @@ int main(int argc, char *argv[])
   while ((opt = getopt(argc, argv, ":ardf:")) != -1) {
     switch (opt) {
     case 'a':
+      checkExclusive(mode);
       mode = ADD;
       break;
     case 'r':
+      checkExclusive(mode);
       mode = REMOVE;
       break;
     case 'd':
+      checkExclusive(mode);
       mode = REMOVE_ALL;
       break;
     case 'f':
@@ -205,5 +209,13 @@ int readInTags(char *path, char *buffer) {
     return 0;
   }
   return result;
+}
+
+void checkExclusive(int mode)
+{
+  if (mode != READ) {
+    fprintf(stderr, "usage: taggins [-a|-r|-d] [-f filepath] [tag ...]\n");
+    exit(EXIT_FAILURE);
+  }
 }
 
