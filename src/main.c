@@ -26,6 +26,7 @@ int writeOutTags(char *, char *, int);
 int readInTags(char *, char *);
 void checkExclusive(int);
 void printPathWithTags(char *, char *);
+void chomp(char *);
 
 int main(int argc, char *argv[])
 {
@@ -62,6 +63,7 @@ int main(int argc, char *argv[])
   char *line = NULL;
   size_t len = 0;
   while (getline(&line, &len, stdin) != -1) {
+    chomp(line);
     if (processPath(line, argc, argv, mode) < 0) {
       free(line);
       exit(EXIT_FAILURE);
@@ -245,3 +247,7 @@ void printPathWithTags(char *path, char *tags)
   printf("\n");
 }
 
+void chomp(char *st)
+{
+  st[strcspn(st, "\n")] = '\0';
+}
