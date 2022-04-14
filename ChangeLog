@@ -1,2 +1,9 @@
 2022-04-12 Dorian Lance Yeager <chibby.bromanson@eightbitmonster.com>
 	Initial release
+2022-04-13 Dorian Lance Yeager <chibby.bromanson@eightbitmonster.com>
+  Altering the way tags are displayed.  Now they appear after the path as
+	tags:{tagOne tagTwo tagThree}.  This is so you can more easily remove them
+	downstream with sed -E 's/ tags:\{.*//
+
+	Improved error handling.  The command will error out if a file does not
+	exist.
