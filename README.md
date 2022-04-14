@@ -1,7 +1,7 @@
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.me/DorianYeager/5)
 
 # Bilbo Taggins
-Suckless tool for descriptively tagging files
+A command line tool for descriptively tagging files
 
 ## About The Project
 Taggins is a command line tool that allows you to; create, read, update, and delete descripive tags for your files.  It adheres to the Unix phiosophy of tools that do one thing really well.  Taggins is meant to tie in with other command line tools providing you a way of quickly locating items of interest.
@@ -9,7 +9,7 @@ Taggins is a command line tool that allows you to; create, read, update, and del
 You should probably use taggins if:
 * You are a linux user.
 * You like stringing together powerful commands in the terminal.
-* You have vast amounts of media and need advanced filtering.
+* You have vast amounts of media and need a powerful tool to help you categorize.
 * You are a researcher that needs to catagorize files.
 * You are a parent that wants to launch a slideshow in < 20 seconds of all pictures with tags: Chester LittleLeaque 2019.
 * You are a person who likes to categorize things in arbitrary ways.
@@ -19,8 +19,10 @@ You may want to move along if:
 * You do not like the command line and the sight of a terminal fills you with chagrin.
 
 ## Getting Started
+This application expects some kind of POSIX environment.  Linux is nice and I hear that it's free for the next 24 hours.
+
 To use taggins you must have a file system that supports extended attributes.
-Taggins maintains a string of one word tags separated by spaces in an extended file attribute.  Most (but not all) modern file systems support extended file attributes and have them enabled by default.
+Taggins maintains a string of one word tags separated by spaces in an extended file attribute.  Most (but not all) modern file systems support extended file attributes and have them enabled by default.  Don't worry, taggins will let you know.
 
 ## Installation in any Linux environment
 1. Clone the repo
@@ -33,6 +35,10 @@ git clone https://github.com/bromanbro/taggins.git
 make
 sudo make install
 ```
+
+## Roadmap
+- [ ] Release usage videos demoing taggins with other command line tools.
+- [ ] Create a Brew package for installation on Macintosh.
 
 ## Man Page
 ### NAME
