@@ -17,7 +17,7 @@ enum {
   REMOVE_ALL
 };
 
-int displayTags(char *);
+int readTags(char *);
 int addTags(char *, int, char *[]);
 int removeTags(char *, int, char *[]);
 int removeAllTags(char *);
@@ -25,6 +25,7 @@ int processPath(char *, int, char *[], int);
 int writeOutTags(char *, char *, int);
 int readInTags(char *, char *);
 void checkExclusive(int);
+void printPathWithTags(char *, char *);
 
 int main(int argc, char *argv[])
 {
@@ -70,15 +71,13 @@ int main(int argc, char *argv[])
   exit(EXIT_SUCCESS);
 }
 
-int displayTags(char *path)
+int readTags(char *path)
 {
   char temp[BUFFER_SIZE];
-  printf("%s ", path);
   if (readInTags(path, temp) < 0) {
-    printf("\n");
     return -1;
   }
-  printf("%s\n", temp);
+  printPathWithTags(path, temp);
 }
 
 int addTags(char *path, int argc, char *argv[])
@@ -117,7 +116,7 @@ int addTags(char *path, int argc, char *argv[])
     }
   }
   tempForWrite[strlen(tempForWrite) - 1] = '\0';
-  printf("%s %s\n", path, tempForWrite);
+  printPathWithTags(path, tempForWrite);
   return writeOutTags(path, tempForWrite, numberOfExistingTags);
 }
 
@@ -153,7 +152,7 @@ int removeTags(char *path, int argc, char *argv[])
     }
   }
   tempForWrite[strlen(tempForWrite) - 1] = '\0';
-  printf("%s %s\n", path, tempForWrite);
+  printPathWithTags(path, tempForWrite);
   return writeOutTags(path, tempForWrite, numberOfExistingTags);
 }
 
@@ -169,7 +168,7 @@ int processPath(char *path, int argc, char *argv[], int mode)
 {
   switch (mode) {
   case READ:
-    return displayTags(path);
+    return readTags(path);
   case ADD:
     return addTags(path, argc, argv);
   case REMOVE:
@@ -217,5 +216,14 @@ void checkExclusive(int mode)
     fprintf(stderr, "usage: taggins [-a|-r|-d] [-f filepath] [tag ...]\n");
     exit(EXIT_FAILURE);
   }
+}
+
+void printPathWithTags(char *path, char *tags)
+{
+  printf("%s", path);
+  if (strlen(tags) > 0) {
+    printf(" tags:{%s}", tags);
+  }
+  printf("\n");
 }
 
