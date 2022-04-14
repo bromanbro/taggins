@@ -4,14 +4,14 @@
 A command line tool for descriptively tagging files
 
 ## About The Project
-Taggins is a command line tool that allows you to; create, read, update, and delete descripive tags for your files.  It adheres to the Unix phiosophy of tools that do one thing really well.  Taggins is meant to tie in with other command line tools providing you a way of quickly locating items of interest.
+Taggins is a command line tool that allows you to; create, read, update, and delete descripive tags for your files.  It adheres to the Unix philosophy of tools that do one thing really well.  Taggins is meant to tie in with other command line tools providing you a way of quickly locating items of interest.
 
 You should probably use taggins if:
 * You are a linux user.
 * You like stringing together powerful commands in the terminal.
 * You have vast amounts of media and need a powerful tool to help you categorize.
 * You are a researcher that needs to catagorize files.
-* You are a parent that wants to launch a slideshow in < 20 seconds of all pictures with tags: Chester LittleLeaque 2019.
+* You are a parent that wants to launch a slideshow in < 20 seconds of all pictures with tags: Chester LittleLeague 2019.
 * You are a person who likes to categorize things in arbitrary ways.
 
 You may want to move along if:
