@@ -123,6 +123,7 @@ int addTags(char *path, int argc, char *argv[])
 int removeTags(char *path, int argc, char *argv[])
 {
   int numberOfExistingTags = 0;
+  int numberOfTags = 0;
   char temp[BUFFER_SIZE];
   char tempForWrite[BUFFER_SIZE];
   char *existingTags[MAX_TAGS];
@@ -147,20 +148,28 @@ int removeTags(char *path, int argc, char *argv[])
       }
     }
     if (skip != 1) {
+      numberOfTags++;
       strcat(tempForWrite, existingTags[j]);
       strcat(tempForWrite, " ");
     }
   }
   tempForWrite[strlen(tempForWrite) - 1] = '\0';
   printPathWithTags(path, tempForWrite);
-  return writeOutTags(path, tempForWrite, numberOfExistingTags);
+  return writeOutTags(path, tempForWrite, numberOfTags);
 }
 
 int removeAllTags(char *path) {
-  if ((removexattr(path, ATTR) < 0) && (errno == ENOTSUP)) {
-    fprintf (stderr, "Extended attributes are not available on your filesystem.\n");
-    return -1;
+  int result = removexattr(path, ATTR);
+  if (result < 0) {
+    if (errno == ENOTSUP) {
+      fprintf (stderr, "Extended attributes are not available on your filesystem.\n");
+      return -1;
+    } else if (errno == ENOENT) {
+      fprintf (stderr, "Extended attributes are not available on your filesystem.\n");
+      return -1;
+    }
   }
+  printf("%s - extended attribute removed\n", path);
   return 1;
 }
 
@@ -192,16 +201,25 @@ int writeOutTags(char *path, char *value, int numberOfTags)
     } else if (errno == ENOTSUP) {
       fprintf (stderr, "Extended attributes are not available on your filesystem.\n");
       return -1;
+    } else if (errno == ENOENT) {
+      fprintf(stderr, "File does not exist.\n");
+      return -1;
     }
   }
   return 1;
 }
 
 int readInTags(char *path, char *buffer) {
+  /* We do not always want to hard fail on an error.  It could be that the user.tags xattr
+   * Is simply not on the file at this time.  So we just keep processing.
+   */
   int result = getxattr(path, ATTR, buffer, BUFFER_SIZE);
   if (result < 0) {
     if (errno == ENOTSUP) {
-      fprintf (stderr, "Extended attributes are not available on your filesystem.\n");
+      fprintf(stderr, "Extended attributes are not available on your filesystem.\n");
+      return -1;
+    } else if (errno == ENOENT) {
+      fprintf(stderr, "File does not exist.\n");
       return -1;
     }
     buffer[0] = '\0';
