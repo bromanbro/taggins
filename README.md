@@ -37,7 +37,7 @@ sudo make install
 ```
 
 ## Usage
-[Video Demonstration](https://www.youtube.com/watch?v=3yJiV5gzcEo)
+[Video Demonstration](https://www.youtube.com/watch?v=gsZpmVI-fp4)
 
 ## Some Examples
 Add tags to a single file on the command line
