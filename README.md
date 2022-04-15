@@ -66,7 +66,7 @@ feh `find . -type f | taggins | fzf -m | sed 's/ tags:\{.*\}//'`
 ```
 
 ## Roadmap
-- [ ] Release usage videos demoing taggins with other command line tools.
+- [x] Release usage videos demoing taggins with other command line tools.
 - [ ] Create a Brew package for installation on Macintosh.
 
 ## Man Page
