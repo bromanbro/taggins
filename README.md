@@ -36,6 +36,35 @@ make
 sudo make install
 ```
 
+## Usage
+[Video Demonstration](https://www.youtube.com/watch?v=3yJiV5gzcEo)
+
+## Some Examples
+Add tags to a single file on the command line
+```sh
+taggins -af file1.jpg Florida SummerTime 1975
+```
+
+Add tags to all the files in set
+```sh
+find . -type f | taggins -a WestCoast 2019 MusicFestival
+```
+
+Display the tags for a set of files
+```sh
+find . -type f | taggins
+```
+
+Remove all tags for all files in a set
+```sh
+find . -type f | taggins -d
+```
+
+Build a slideshow using fzf and taggins
+```sh
+feh `find . -type f | taggins | fzf -m | sed 's/ tags:\{.*\}//'`
+```
+
 ## Roadmap
 - [ ] Release usage videos demoing taggins with other command line tools.
 - [ ] Create a Brew package for installation on Macintosh.
