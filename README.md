@@ -62,7 +62,7 @@ find . -type f | taggins -d
 
 Build a slideshow using fzf and taggins
 ```sh
-feh `find . -type f | taggins | fzf -m | sed 's/ tags:\{.*\}//'`
+feh -D 15 `find . -type f | taggins | fzf -m | sed 's/ tags:\{.*\}//'`
 ```
 
 ## Roadmap
