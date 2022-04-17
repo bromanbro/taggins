@@ -8,7 +8,7 @@
 #define ATTR "user.tags"
 #define MAX_TAGS 50
 #define MAX_TAG_SIZE 50
-#define BUFFER_SIZE MAX_TAGS * MAX_TAG_SIZE
+#define BUFFER_SIZE (MAX_TAGS * MAX_TAG_SIZE)
 
 enum {
   READ,
@@ -163,11 +163,8 @@ int removeTags(char *path, int argc, char *argv[])
 int removeAllTags(char *path) {
   int result = removexattr(path, ATTR);
   if (result < 0) {
-    if (errno == ENOTSUP) {
-      fprintf (stderr, "Extended attributes are not available on your filesystem.\n");
-      return -1;
-    } else if (errno == ENOENT) {
-      fprintf (stderr, "Extended attributes are not available on your filesystem.\n");
+    if ((errno == ENOTSUP) || (errno == ENOENT)){
+      fprintf (stderr, "%s\n", strerror(errno));
       return -1;
     }
   }
@@ -197,16 +194,8 @@ int writeOutTags(char *path, char *value, int numberOfTags)
   } else if (numberOfTags == 0) {
     return removeAllTags(path);
   } else if (setxattr(path, ATTR, value, strlen(value) + 1, 0) < 0) {
-    if ((errno == EDQUOT) || (errno == ENOSPC)) {
-      fprintf(stderr, "Insufficient space to write tags");
-      return -1;
-    } else if (errno == ENOTSUP) {
-      fprintf (stderr, "Extended attributes are not available on your filesystem.\n");
-      return -1;
-    } else if (errno == ENOENT) {
-      fprintf(stderr, "File does not exist.\n");
-      return -1;
-    }
+    fprintf (stderr, "%s\n", strerror(errno));
+    return -1;
   }
   return 1;
 }
@@ -217,11 +206,8 @@ int readInTags(char *path, char *buffer) {
    */
   int result = getxattr(path, ATTR, buffer, BUFFER_SIZE);
   if (result < 0) {
-    if (errno == ENOTSUP) {
-      fprintf(stderr, "Extended attributes are not available on your filesystem.\n");
-      return -1;
-    } else if (errno == ENOENT) {
-      fprintf(stderr, "File does not exist.\n");
+    if ((errno == ENOTSUP) || (errno == ENOENT)){
+      fprintf (stderr, "%s\n", strerror(errno));
       return -1;
     }
     buffer[0] = '\0';
