@@ -163,7 +163,7 @@ int removeTags(char *path, int argc, char *argv[])
 int removeAllTags(char *path) {
   int result = removexattr(path, ATTR);
   if (result < 0) {
-    if ((errno == ENOTSUP) || (errno == ENOENT)){
+    if ((errno == ENOTSUP) || (errno == ENOENT)) {
       fprintf (stderr, "%s\n", strerror(errno));
       return -1;
     }
@@ -206,7 +206,7 @@ int readInTags(char *path, char *buffer) {
    */
   int result = getxattr(path, ATTR, buffer, BUFFER_SIZE);
   if (result < 0) {
-    if ((errno == ENOTSUP) || (errno == ENOENT)){
+    if ((errno == ENOTSUP) || (errno == ENOENT)) {
       fprintf (stderr, "%s\n", strerror(errno));
       return -1;
     }
