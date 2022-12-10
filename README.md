@@ -60,6 +60,11 @@ Remove all tags for all files in a set
 find . -type f | taggins -d
 ```
 
+See the unique tags that you have for a set of files (alias this command to showtags in your .bashrc)
+```sh
+find . -type f | taggins | grep tags | sed -E 's/.*\{//;s/\}//;s/ /\n/g' | sort | uniq
+```
+
 Build a slideshow using fzf and taggins
 ```sh
 feh -D 15 `find . -type f | taggins | fzf -m | sed 's/ tags:\{.*\}//'`
